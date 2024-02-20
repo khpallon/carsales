@@ -1,14 +1,16 @@
 package main
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
+	"html/template"
 	"net/http"
 )
 
 type Car struct {
 	Title string `json:"title"`
-	Price int    `json:"price"`
+	Price string `json:"price"`
 	Desc  string `json:"description"`
 }
 
@@ -26,6 +28,26 @@ func CreateCar(w http.ResponseWriter, r *http.Request) {
 	// Respond with a success message and status code 201 (Created)
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(newCar)
-	fmt.Println(newCar)
 
+	fmt.Println(newCar.Title)
+
+	sqliteDatabase, _ := sql.Open("sqlite3", "./cars.db") // Open the created SQLite File
+	defer sqliteDatabase.Close()                          // Defer Closing the database
+	createTable(sqliteDatabase)                           // Create Database Tables
+
+}
+
+func indexHandler(w http.ResponseWriter, r *http.Request) {
+	tmpl, err := template.ParseFiles("../frontend/index.html")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	w.Header().Set("Content-Type", "text/html")
+
+	if err := tmpl.Execute(w, nil); err != nil {
+		fmt.Println(err)
+		return
+	}
 }

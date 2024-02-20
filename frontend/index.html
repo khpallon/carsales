@@ -6,7 +6,27 @@
     <title>CarSales</title>
 </head>
 <body>
+    <input id="carname" type="text" placeholder="Car name..." required>
+    <input id="desc" type="text" placeholder="More info..." required>
+    <input id="price" type="amount" placeholder="Car price..." required>
     <button onclick="postCars()">CAR</button>
-    <script src="index.js"></script>
+    <script>
+        
+        function postCars(){
+            const params = {
+                title: document.getElementById("carname").value,
+                price: document.getElementById("price").value,
+                description: document.getElementById("desc").value
+            }
+            console.log(params)
+            fetch("/api/cars", {
+          method: "POST",
+          body: JSON.stringify(params),
+          headers: {
+            "Content-type": "application/json; charset=UTF-8"
+          }
+        });
+        
+        }</script>
 </body>
 </html>
